@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <title>Prolog Анализатор</title>
+  <style>
+    /* Основни стилове */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      box-sizing: border-box;
+      color: #2c3e50;
+    }
+
+    h2 {
+      font-size: 36px;
+      color: #2980b9;
+      margin-top: 40px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    h3 {
+      color: #34495e;
+      font-size: 28px;
+      margin-bottom: 15px;
+      font-weight: normal;
+    }
+
+    p, ul {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #2c3e50;
+    }
+
+    /* Формат на бутоните */
+    input[type="file"], button {
+      padding: 14px 22px;
+      margin: 15px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 200px;
+    }
+
+    input[type="file"] {
+      background-color: #ecf0f1;
+      color: #34495e;
+      border: 2px dashed #3498db;
+      text-align: center;
+    }
+
+    input[type="file"]:hover {
+      border-color: #2980b9;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    /* Output секция */
+    #output {
+      background-color: #fff;
+      padding: 30px;
+      margin-top: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 1100px;
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      line-height: 1.8;
+      font-size: 16px;
+    }
+
+    .fact { color: #e74c3c; }
+    .rule { color: #2980b9; }
+    .comment { color: #27ae60; }
+
+    /* Стилове за секциите */
+    section {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      margin: 30px 0;
+      width: 80%;
+      max-width: 1100px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    section h3 {
+      margin-bottom: 15px;
+      color: #2980b9;
+      font-weight: 600;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+
+    /* Стилове за стъпките */
+    .step {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .step-number {
+      font-size: 20px;
+      font-weight: bold;
+      color: #3498db;
+    }
+
+    .step-description {
+      margin-top: 10px;
+      color: #2c3e50;
+      font-size: 16px;
+    }
+
+    /* Анимация за плавно влизане */
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Стилове за малки екрани */
+    @media (max-width: 768px) {
+      body {
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 28px;
+      }
+
+      h3 {
+        font-size: 24px;
+      }
+
+      section {
+        width: 100%;
+        padding: 20px;
+      }
+
+      input[type="file"], button {
+        width: 100%;
+        padding: 12px 18px;
+        font-size: 14px;
+      }
+
+      #output {
+        width: 100%;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🧠 Prolog Анализатор</h2>
+  <input type="file" id="fileInput" accept=".pl">
+  <button id="loadExample">Зареди пример</button>
+  <button id="clearBtn">Изчисти</button>
+
+  <div id="output"></div>
+
+  <!-- Секция за описание на инструмента -->
+  <section>
+    <h3>📘 Какво прави този инструмент?</h3>
+    <p>Този анализатор ти позволява да качиш <strong>Prolog файл (.pl)</strong> и автоматично:</p>
+    <ul>
+      <li>📌 Разделя <strong>фактите</strong> (напр. <code>likes(john, pizza).</code>)</li>
+      <li>⚙️ Извлича <strong>правила</strong> с логически връзки (<code>:-</code>)</li>
+      <li>💬 Показва <strong>коментари</strong> от кода (редове, започващи с <code>%</code>)</li>
+    </ul>
+    <p>Целта е бърз анализ на структурата на Prolog код без нужда от инсталация на допълнителен софтуер.</p>
+  </section>
+
+  <!-- Секция със съвети за писане на Prolog код -->
+  <section>
+    <h3>💡 Съвети за писане на Prolog код</h3>
+    <ul>
+      <li><strong>1. Използвай описателни имена:</strong> Вместо <code>p(X, Y)</code>, използвай <code>parent(X, Y)</code> – така кодът се чете по-лесно.</li>
+      <li><strong>2. Коментирай логиката:</strong> Използвай <code>%</code>, за да поясняваш какво прави всяко правило или факт – това помага при поддръжка и работа в екип.</li>
+      <li><strong>3. Проверявай точките:</strong> Не забравяй <code>.</code> в края на всеки факт или правило – липсата ѝ често води до грешки!</li>
+    </ul>
+  </section>
+
+  <!-- Секция със стъпки за създаване на Prolog код -->
+  <section>
+    <h3>📝 Примерно решение за Prolog код (Стъпка по стъпка)</h3>
+    <div class="step">
+      <div class="step-number">Стъпка 1:</div>
+      <div class="step-description">Започваме с дефиниране на основни факти. Пример: <code>parent(john, mary).</code> Това означава, че Джон е родител на Мери.</div>
+    </div>
+    <div class="step">
+      <div class="step-number">Стъпка 2:</div>
+      <div class="step-description">След това дефинираме правила, които използват тези факти. Пример: <code>grandparent(X, Y) :- parent(X, Z), parent(Z, Y).</code> Това правило казва, че ако X е родител на Z, а Z е родител на Y, тогава X е дядо/баба на Y.</div>
+    </div>
+    <div class="step">
+      <div class="step-number">Стъпка 3:</div>
+      <div class="step-description">Можем да добавим коментари за пояснение на кода. Пример: <code>% Това е правило за дядо/баба</code>.</div>
+    </div>
+    <div class="step">
+      <div class="step-number">Стъпка 4:</div>
+      <div class="step-description">Не забравяйте да проверите за синтактични грешки, като липсваща точка или неправилно написано правило.</div>
+    </div>
+  </section>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const outputDiv = document.getElementById('output');
+    const clearBtn = document.getElementById('clearBtn');
+    const loadExampleBtn = document.getElementById('loadExample');
+
+    function analyze(content) {
+      const lines = content.split('\n');
+      const facts = [];
+      const rules = [];
+      const comments = [];
+
+      lines.forEach(line => {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('%')) {
+          comments.push('<span class="comment">' + trimmed + '</span>');
+        } else if (trimmed.includes(':-')) {
+          rules.push('<span class="rule">' + trimmed + '</span>');
+        } else if (trimmed && trimmed.endsWith('.')) {
+          facts.push('<span class="fact">' + trimmed + '</span>');
+        }
+      });
+
+      const output = `
+<strong>📂 Анализ на Prolog файл:</strong><br><br>
+<strong>🔴 Факти (${facts.length}):</strong><br>${facts.join('<br>')}<br><br>
+<strong>🔵 Правила (${rules.length}):</strong><br>${rules.join('<br>')}<br><br>
+<strong>🟢 Коментари (${comments.length}):</strong><br>${comments.join('<br>')}
+`;
+      outputDiv.innerHTML = output;
+    }
+
+    fileInput.addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        analyze(e.target.result);
+      };
+      reader.readAsText(file);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      fileInput.value = "";
+      outputDiv.innerHTML = "";
+    });
+
+    loadExampleBtn.addEventListener('click', () => {
+      const exampleProlog = `
+% Примерен Prolog код
+parent(john, mary).
+parent(mary, alice).
+
+grandparent(X, Y) :- parent(X, Z), parent(Z, Y).
+
+% Това е коментар
+likes(alice, chocolate).
+happy(X) :- likes(X, chocolate).
+      `;
+      analyze(exampleProlog);
+    });
+  </script>
+
+</body>
+</html>
