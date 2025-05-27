@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <title>Намиране на човек по ID</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input, button {
+      margin-top: 10px;
+      display: block;
+    }
+    #output {
+      margin-top: 20px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Намиране на човек по ID</h2>
+
+  <input type="number" id="inputId" placeholder="Въведи ID" min="1">
+  <button id="findBtn">Намери</button>
+
+  <div id="output"></div>
+
+  <script>
+    const data = [
+      { id: 1, name: "Анна Димитрова", age: 28, city: "Бургас" },
+      { id: 2, name: "Петър Стоянов", age: 35, city: "Русе" },
+      { id: 3, name: "Силвия Костова", age: 22, city: "Стара Загора" }
+    ];
+
+    document.getElementById('findBtn').addEventListener('click', function () {
+      const inputId = parseInt(document.getElementById('inputId').value);
+      const outputDiv = document.getElementById('output');
+
+      if (isNaN(inputId) || inputId < 1) {
+        outputDiv.textContent = "Моля, въведи валидно ID число.";
+        return;
+      }
+
+      const person = data.find(item => item.id === inputId);
+
+      if (person) {
+        outputDiv.textContent = 
+          `ID: ${person.id}\n` +
+          `Име: ${person.name}\n` +
+          `Възраст: ${person.age}\n` +
+          `Град: ${person.city}`;
+      } else {
+        outputDiv.textContent = "Не е намерен човек с това ID.";
+      }
+    });
+  </script>
+
+</body>
+</html>
